@@ -7,7 +7,8 @@ window.onload = function() {
   });
 
   function preload() {
-    game.load.image('neoclub', 'icon_neoclub.png');
+    game.load.image('sprite_neoclub', 'asset/sprite_neoclub.png');
+    game.load.spritesheet('ss_buy', 'asset/spritesheet_buy.png', 100, 100, 2)
   }
 
   var BTNNeoclub;
@@ -22,7 +23,7 @@ window.onload = function() {
     game.stage.setBackgroundColor(0x000000);
 
     // 设置按钮
-    BTNNeoclub = game.add.button(game.world.centerX, game.world.centerY + 20, 'neoclub', function() {
+    BTNNeoclub = game.add.button(game.world.centerX, game.world.centerY + 20, 'sprite_neoclub', function() {
       clickCount++;
     });
     BTNNeoclub.anchor.set(0.5);
@@ -34,15 +35,11 @@ window.onload = function() {
     })
 
     // 设置购买养牛场
-    var TXTBuyFarm = game.add.text(game.world.width, 40, '点我购买养牛场(10块)', {
-      fill: '#FFFFFF'
-    });
-    TXTBuyFarm.anchor.set(1, 0);
-    TXTBuyFarm.inputEnabled = true;
-    TXTBuyFarm.events.onInputUp.add(function() {
+    var BTNBuyFarm = game.add.button(game.world.width, 40, 'ss_buy', function() {
       clickCount -= 10;
       farmCount++;
-    });
+    },this,-1,1, 0,1);
+    BTNBuyFarm.anchor.set(1, 0);
 
     // 设置统计
     TXTClickCount = game.add.text(game.world.centerX, game.world.centerY - 40, '0', {
