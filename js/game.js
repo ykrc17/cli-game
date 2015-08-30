@@ -38,8 +38,12 @@ window.onload = function() {
     var BTNBuyFarm = game.add.button(game.world.width, 40, 'ss_buy', function() {
       clickCount -= 10;
       farmCount++;
-    },this,-1,1, 0,1);
+    }, this, 1, 1, 0, 1);
     BTNBuyFarm.anchor.set(1, 0);
+    var TXTBuyFarm = game.add.text(game.world.width - BTNBuyFarm.width, BTNBuyFarm.height, '买养牛场(10块)→', {
+      fill: '#FFFFFF'
+    });
+    TXTBuyFarm.anchor.set(1, 0.5);
 
     // 设置统计
     TXTClickCount = game.add.text(game.world.centerX, game.world.centerY - 40, '0', {
@@ -53,7 +57,7 @@ window.onload = function() {
     });
 
     // 设置右上角提示
-    var TXTHint = game.add.text(game.world.width, 0, '点击中间按钮，可以计数', {
+    var TXTHint = game.add.text(game.world.width, 0, '点击中间按钮，可以加钱', {
       fill: '#FFFFFF'
     });
     TXTHint.anchor.set(1, 0);
