@@ -10,13 +10,12 @@ window.onload = function() {
     game.load.image('neoclub', 'icon_neoclub.png');
   }
 
-  var cursors;
-
   var BTNNeoclub;
   var TXTClickCount;
   var TXTFps;
 
   var clickCount;
+  var farmCount;
   var time;
   var frameCount;
 
@@ -26,6 +25,14 @@ window.onload = function() {
     // 设置按钮
     BTNNeoclub = game.add.button(game.world.centerX, game.world.centerY + 20, 'neoclub', addCount);
     BTNNeoclub.anchor.set(0.5);
+
+    // 设置购买养牛场
+    var TXTBuyFarm = game.add.text(game.world.width, 40, '点我购买养牛场(10块)', {
+      fill: '#FFFFFF'
+    });
+    TXTBuyFarm.anchor.set(1, 0);
+    TXTBuyFarm.inputEnabled = true;
+    TXTBuyFarm.events.onInputUp.add(addFarm);
 
     // 设置统计
     TXTClickCount = game.add.text(game.world.centerX, game.world.centerY - 40, '0', {
@@ -46,9 +53,9 @@ window.onload = function() {
 
     // 初始化数据
     clickCount = 0;
+    farmCount = 0;
     frameCount = 0;
     time = new Date().getTime();
-    cursors = game.input.keyboard.createCursorKeys();
   }
 
   function update() {
@@ -62,11 +69,20 @@ window.onload = function() {
       frameCount++;
     }
 
+    // 计算养牛场
+    var growSpeed = farmCount * 1 / 60;
+    clickCount += growSpeed;
+
     // 显示点击统计
-    TXTClickCount.setText('牛力:'+clickCount);
+    TXTClickCount.setText('牛力:' + clickCount.toFixed(2));
   }
 
   function addCount() {
     clickCount++;
+  }
+
+  function addFarm() {
+    clickCount -= 10;
+    farmCount++;
   }
 };
