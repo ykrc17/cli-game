@@ -13,6 +13,7 @@ window.onload = function() {
 
   var BTNNeoclub;
   var TXTClickCount;
+  var LabelHint;
   var TXTFps;
 
   var clickCount = 0;
@@ -36,14 +37,18 @@ window.onload = function() {
 
     // 设置购买养牛场
     var BTNBuyFarm = game.add.button(game.world.width, 40, 'ss_buy', function() {
-      clickCount -= 10;
-      farmCount++;
+      if (clickCount >= 10) {
+        clickCount -= 10;
+        farmCount++;
+      } else {
+        showLabel('你太穷了');
+      }
     }, this, 1, 1, 0, 1);
     BTNBuyFarm.anchor.set(1, 0);
-    var TXTBuyFarm = game.add.text(game.world.width - BTNBuyFarm.width, BTNBuyFarm.height, '买养牛场(10块)→', {
+    var TXTBuyFarm = game.add.text(game.world.width - BTNBuyFarm.width, BTNBuyFarm.y, '买养牛场\n价格:10→\n效率:0.1/s', {
       fill: '#FFFFFF'
     });
-    TXTBuyFarm.anchor.set(1, 0.5);
+    TXTBuyFarm.anchor.set(1, 0);
 
     // 设置统计
     TXTClickCount = game.add.text(game.world.centerX, game.world.centerY - 40, '0', {
@@ -74,10 +79,26 @@ window.onload = function() {
     frameCount++;
 
     // 计算养牛场
-    var growSpeed = farmCount * 1 / 60;
+    var growSpeed = farmCount * 0.1 / 60;
     clickCount += growSpeed;
 
     // 显示点击统计
     TXTClickCount.setText('牛力:' + clickCount.toFixed(2));
+  }
+
+  function showLabel(hint) {
+    if (LabelHint) {
+      LabelHint.destroy();
+      LabelHint = null;
+    }
+    var LabelHint = game.add.text(game.world.centerX, 40, hint, {
+      fill: '#FFFFFF'
+    });
+    LabelHint.anchor.set(0.5);
+    game.time.events.add(Phaser.Timer.SECOND * 2, function() {
+      game.add.tween(LabelHint).to({
+        alpha: 0
+      }, 2000, Phaser.Easing.Linear.None, true);
+    });
   }
 };
