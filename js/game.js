@@ -23,8 +23,16 @@ window.onload = function() {
     game.stage.setBackgroundColor(0x000000);
 
     // 设置按钮
-    BTNNeoclub = game.add.button(game.world.centerX, game.world.centerY + 20, 'neoclub', addCount);
+    BTNNeoclub = game.add.button(game.world.centerX, game.world.centerY + 20, 'neoclub', function() {
+      clickCount++;
+    });
     BTNNeoclub.anchor.set(0.5);
+    BTNNeoclub.events.onInputUp.add(function() {
+      doTween(BTNNeoclub, 1.0);
+    });
+    BTNNeoclub.events.onInputDown.add(function() {
+      doTween(BTNNeoclub, 0.9);
+    })
 
     // 设置购买养牛场
     var TXTBuyFarm = game.add.text(game.world.width, 40, '点我购买养牛场(10块)', {
@@ -32,7 +40,10 @@ window.onload = function() {
     });
     TXTBuyFarm.anchor.set(1, 0);
     TXTBuyFarm.inputEnabled = true;
-    TXTBuyFarm.events.onInputUp.add(addFarm);
+    TXTBuyFarm.events.onInputUp.add(function() {
+      clickCount -= 10;
+      farmCount++;
+    });
 
     // 设置统计
     TXTClickCount = game.add.text(game.world.centerX, game.world.centerY - 40, '0', {
@@ -75,14 +86,5 @@ window.onload = function() {
 
     // 显示点击统计
     TXTClickCount.setText('牛力:' + clickCount.toFixed(2));
-  }
-
-  function addCount() {
-    clickCount++;
-  }
-
-  function addFarm() {
-    clickCount -= 10;
-    farmCount++;
   }
 };
