@@ -5,78 +5,68 @@ window.onload = function() {
     create: create,
     update: update
   });
+
+  function preload() {
+    game.load.image('neoclub', 'icon_neoclub.png');
+  }
+
   var cursors;
 
-  var logo;
-  var fps;
+  var BTNNeoclub;
+  var TXTClickCount;
+  var TXTFps;
 
+  var clickCount;
   var time;
   var frameCount;
 
-  function preload() {
-    game.load.image('logo', 'neoclubLogo.ico');
-  }
-
   function create() {
-    game.physics.startSystem(Phaser.Physics.ARCADE);
     game.stage.setBackgroundColor(0x000000);
 
-    logo = game.add.sprite(game.world.centerX, game.world.centerY, 'logo');
-    game.physics.arcade.enable(logo);
+    // 设置按钮
+    BTNNeoclub = game.add.button(game.world.centerX, game.world.centerY + 20, 'neoclub', addCount);
+    BTNNeoclub.anchor.set(0.5);
 
-    fps = game.add.text(0, 0, '', {
+    // 设置统计
+    TXTClickCount = game.add.text(game.world.centerX, game.world.centerY - 40, '0', {
       fill: '#FFFFFF'
     });
+    TXTClickCount.anchor.set(0.5);
+
+    // 设置左上角fps
+    TXTFps = game.add.text(0, 0, 'fps:', {
+      fill: '#FFFFFF'
+    });
+
+    // 设置右上角提示
+    var TXTHint = game.add.text(game.world.width, 0, '点击中间按钮，可以计数', {
+      fill: '#FFFFFF'
+    });
+    TXTHint.anchor.set(1, 0);
+
+    // 初始化数据
+    clickCount = 0;
     frameCount = 0;
-
-    var hint = game.add.text(game.world.width, 0, '使用上下左右移动', {
-      fill: '#FFFFFF'
-    });
-    hint.position.x = game.world.width - hint.width;
-
     time = new Date().getTime();
-
     cursors = game.input.keyboard.createCursorKeys();
   }
 
   function update() {
-    if (logo.position.x < 0) {
-      logo.position.x = game.world.width;
-    }
-    if (logo.position.y < 0) {
-      logo.position.y = game.world.height;
-    }
-    if (logo.position.x > game.world.width) {
-      logo.position.x = 0;
-    }
-    if (logo.position.y > game.world.height) {
-      logo.position.y = 0;
-    }
-
-    var velocityX = 0;
-    var velocityY = 0;
-    if (cursors.right.isDown) {
-      velocityX += 200;
-    }
-    if (cursors.left.isDown) {
-      velocityX -= 200;
-    }
-    if (cursors.up.isDown) {
-      velocityY -= 200;
-    }
-    if (cursors.down.isDown) {
-      velocityY += 200;
-    }
-    logo.body.velocity.x = velocityX;
-    logo.body.velocity.y = velocityY;
-
+    // 显示fps
     var now = new Date().getTime();
     if (now - time > 1000) {
       time = now;
-      fps.setText('fps:' + frameCount);
+      TXTFps.setText('fps:' + frameCount);
       frameCount = 0;
     } else {
       frameCount++;
     }
+
+    // 显示点击统计
+    TXTClickCount.setText('牛力:'+clickCount);
+  }
+
+  function addCount() {
+    clickCount++;
   }
 };
