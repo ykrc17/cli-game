@@ -14,10 +14,9 @@ window.onload = function() {
   var TXTClickCount;
   var TXTFps;
 
-  var clickCount;
-  var farmCount;
-  var time;
-  var frameCount;
+  var clickCount = 0;
+  var farmCount = 0;
+  var frameCount = 0;
 
   function create() {
     game.stage.setBackgroundColor(0x000000);
@@ -62,23 +61,16 @@ window.onload = function() {
     });
     TXTHint.anchor.set(1, 0);
 
-    // 初始化数据
-    clickCount = 0;
-    farmCount = 0;
-    frameCount = 0;
-    time = new Date().getTime();
+    // 初始化事件
+    game.time.events.loop(Phaser.Timer.SECOND, function() {
+      TXTFps.setText('fps:' + frameCount);
+      frameCount = 0;
+    });
   }
 
   function update() {
     // 显示fps
-    var now = new Date().getTime();
-    if (now - time > 1000) {
-      time = now;
-      TXTFps.setText('fps:' + frameCount);
-      frameCount = 0;
-    } else {
-      frameCount++;
-    }
+    frameCount++;
 
     // 计算养牛场
     var growSpeed = farmCount * 1 / 60;
