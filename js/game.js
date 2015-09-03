@@ -1,9 +1,10 @@
 window.onload = function() {
 
-  var game = new Phaser.Game(800, 600, Phaser.AUTO, 'game', {
+  var game = new Phaser.Game(800, 600, Phaser.CANVAS, 'game', {
     preload: preload,
     create: create,
-    update: update
+    update: update,
+    render: render
   });
 
   function preload() {
@@ -14,13 +15,12 @@ window.onload = function() {
   var BTNNeoclub;
   var TXTClickCount;
   var LabelHint;
-  var TXTFps;
 
   var clickCount = 0;
   var farmCount = 0;
-  var frameCount = 0;
 
   function create() {
+    game.time.advancedTiming = true;
     game.stage.setBackgroundColor(0x000000);
 
     // 设置按钮
@@ -50,40 +50,24 @@ window.onload = function() {
     });
     TXTBuyFarm.anchor.set(1, 0);
 
-    // 设置统计
-    TXTClickCount = game.add.text(game.world.centerX, game.world.centerY - 40, '0', {
-      fill: '#FFFFFF'
-    });
-    TXTClickCount.anchor.set(0.5);
-
-    // 设置左上角fps
-    TXTFps = game.add.text(0, 0, 'fps:', {
-      fill: '#FFFFFF'
-    });
-
     // 设置右上角提示
     var TXTHint = game.add.text(game.world.width, 0, '点击中间按钮，可以加钱', {
       fill: '#FFFFFF'
     });
     TXTHint.anchor.set(1, 0);
-
-    // 初始化事件
-    game.time.events.loop(Phaser.Timer.SECOND, function() {
-      TXTFps.setText('fps:' + frameCount);
-      frameCount = 0;
-    });
   }
 
   function update() {
-    // 显示fps
-    frameCount++;
-
     // 计算养牛场
     var growSpeed = farmCount * 0.1 / 60;
     clickCount += growSpeed;
+  }
 
+  function render() {
     // 显示点击统计
-    TXTClickCount.setText('牛力:' + clickCount.toFixed(2));
+    game.debug.text('小游♂戏 by yk', 2, 16, '#00FF00');
+    game.debug.text('fps:' + game.time.fps+'/'+game.time.desiredFps, 2, 32, '#00FF00');
+    game.debug.text('牛力:' + clickCount.toFixed(2), 2, 48, '#00FF00');
   }
 
   function showLabel(hint) {
