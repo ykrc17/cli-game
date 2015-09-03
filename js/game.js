@@ -12,11 +12,15 @@ window.onload = function() {
     game.load.spritesheet('ss_buy', 'asset/spritesheet_buy.png', 100, 100, 2)
   }
 
-  var BTNNeoclub;
-  var TXTClickCount;
-  var LabelHint;
+  var FPS = 60;
+  var COW_EAT_RATE = 0.01;
 
-  var clickCount = 0;
+  var buttonNeoclub;
+  var labelHint;
+
+  var neoclubCount = 0;
+  var neoclubSpeed = 0;
+  var foodCount = 0;
   var farmCount = 0;
 
   function create() {
@@ -24,21 +28,21 @@ window.onload = function() {
     game.stage.setBackgroundColor(0x000000);
 
     // 设置按钮
-    BTNNeoclub = game.add.button(game.world.centerX, game.world.centerY + 20, 'sprite_neoclub', function() {
-      clickCount++;
+    buttonNeoclub = game.add.button(game.world.centerX, game.world.centerY + 20, 'sprite_neoclub', function() {
+      neoclubCount++;
     });
-    BTNNeoclub.anchor.set(0.5);
-    BTNNeoclub.events.onInputUp.add(function() {
-      doTween(BTNNeoclub, 1.0);
+    buttonNeoclub.anchor.set(0.5);
+    buttonNeoclub.events.onInputUp.add(function() {
+      doTween(buttonNeoclub, 1.0);
     });
-    BTNNeoclub.events.onInputDown.add(function() {
-      doTween(BTNNeoclub, 0.9);
+    buttonNeoclub.events.onInputDown.add(function() {
+      doTween(buttonNeoclub, 0.9);
     })
 
     // 设置购买养牛场
     var BTNBuyFarm = game.add.button(game.world.width, 40, 'ss_buy', function() {
-      if (clickCount >= 10) {
-        clickCount -= 10;
+      if (neoclubCount >= 10) {
+        neoclubCount -= 10;
         farmCount++;
       } else {
         showLabel('你太穷了');
@@ -59,28 +63,36 @@ window.onload = function() {
 
   function update() {
     // 计算养牛场
-    var growSpeed = farmCount * 0.1 / 60;
-    clickCount += growSpeed;
+    // var growSpeed = farmCount * 0.1 / 60;
+    // neoclubCount += growSpeed;
+
+    if (foodCount < 0) {
+      foodCount = 0;
+    }
+    if (foodCount == 0) {
+      neoclubSpeed = -neoclubCount * COW_EAT_RATE / FPS;
+    }
+    neoclubCount += neoclubSpeed;
   }
 
   function render() {
     // 显示点击统计
     game.debug.text('小游♂戏 by yk', 2, 16, '#00FF00');
-    game.debug.text('fps:' + game.time.fps+'/'+game.time.desiredFps, 2, 32, '#00FF00');
-    game.debug.text('牛力:' + clickCount.toFixed(2), 2, 48, '#00FF00');
+    game.debug.text('fps:' + game.time.fps + '/' + game.time.desiredFps, 2, 32, '#00FF00');
+    game.debug.text('牛力:' + neoclubCount.toFixed(2) + '(' + (neoclubSpeed * 60).toFixed(2) + '/s)', 2, 48, '#00FF00');
   }
 
   function showLabel(hint) {
-    if (LabelHint) {
-      LabelHint.destroy();
-      LabelHint = null;
+    if (labelHint) {
+      labelHint.destroy();
+      labelHint = null;
     }
-    var LabelHint = game.add.text(game.world.centerX, 40, hint, {
+    var labelHint = game.add.text(game.world.centerX, 40, hint, {
       fill: '#FFFFFF'
     });
-    LabelHint.anchor.set(0.5);
+    labelHint.anchor.set(0.5);
     game.time.events.add(Phaser.Timer.SECOND * 2, function() {
-      game.add.tween(LabelHint).to({
+      game.add.tween(labelHint).to({
         alpha: 0
       }, 2000, Phaser.Easing.Linear.None, true);
     });
