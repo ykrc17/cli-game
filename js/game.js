@@ -9,11 +9,17 @@ window.onload = function() {
 
   function preload() {
     game.load.image('sprite_neoclub', 'asset/sprite_neoclub.png');
-    game.load.spritesheet('ss_buy', 'asset/spritesheet_buy.png', 100, 100, 2)
+    game.load.spritesheet('ss_buy', 'asset/spritesheet_buy.png', 100, 100, 2);
+    game.load.spritesheet('ss_food', 'asset/spritesheet_food.png', 100, 100, 2);
   }
 
+  var COLOR_WHITE = '#FFFFFF';
+  var COLOR_BLACK = '#000000';
+  var COLOR_GREEN = '#00FF00';
+
   var FPS = 60;
-  var COW_EAT_RATE = 0.01;
+  var COW_BORN_RATE = 1 / 40; // 一头牛40天可以生一头牛
+  var COW_EAT_RATE = 1 / 10; // 一头牛10天可以吃一头牛
 
   var buttonNeoclub;
   var labelHint;
@@ -21,6 +27,7 @@ window.onload = function() {
   var neoclubCount = 0;
   var neoclubSpeed = 0;
   var foodCount = 0;
+  var foodSpeed = 0;
   var farmCount = 0;
 
   function create() {
@@ -40,23 +47,33 @@ window.onload = function() {
     })
 
     // 设置购买养牛场
-    var BTNBuyFarm = game.add.button(game.world.width, 40, 'ss_buy', function() {
-      if (neoclubCount >= 10) {
-        neoclubCount -= 10;
-        farmCount++;
-      } else {
-        showLabel('你太穷了');
-      }
-    }, this, 1, 1, 0, 1);
-    BTNBuyFarm.anchor.set(1, 0);
-    var TXTBuyFarm = game.add.text(game.world.width - BTNBuyFarm.width, BTNBuyFarm.y, '买养牛场\n价格:10→\n效率:0.1/s', {
-      fill: '#FFFFFF'
-    });
-    TXTBuyFarm.anchor.set(1, 0);
+    // var BTNBuyFarm = game.add.button(game.world.width, 40, 'ss_buy', function() {
+    //   if (neoclubCount >= 10) {
+    //     neoclubCount -= 10;
+    //     farmCount++;
+    //   } else {
+    //     showLabel('你太穷了');
+    //   }
+    // }, this, 1, 1, 0, 1);
+    // BTNBuyFarm.anchor.set(1, 0);
+    // var TXTBuyFarm = game.add.text(game.world.width - BTNBuyFarm.width, BTNBuyFarm.y, '买养牛场\n价格:10→\n效率:0.1/s', {
+    //   fill: COLOR_WHITE
+    // });
+    // TXTBuyFarm.anchor.set(1, 0);
+
+    var buttonBuyFood = game.add.button(game.world.width, 40, 'ss_food', function() {
+      foodCount++;
+    }, this, 0, 0, 1);
+    buttonBuyFood.anchor.set(1, 0);
+    var labelBuyFood = game.add.text(game.world.width - buttonBuyFood.width, buttonBuyFood.y + buttonBuyFood.height / 2,
+      '买食物(1个)\n*没食物牛会吃牛', {
+        fill: COLOR_WHITE
+      });
+    labelBuyFood.anchor.set(1, 0.5);
 
     // 设置右上角提示
     var TXTHint = game.add.text(game.world.width, 0, '点击中间按钮，可以加钱', {
-      fill: '#FFFFFF'
+      fill: COLOR_WHITE
     });
     TXTHint.anchor.set(1, 0);
   }
@@ -66,20 +83,33 @@ window.onload = function() {
     // var growSpeed = farmCount * 0.1 / 60;
     // neoclubCount += growSpeed;
 
+    neoclubSpeed = 0;
+    foodSpeed = 0;
+
+    if (neoclubCount > 2) {
+      neoclubSpeed += neoclubCount * COW_BORN_RATE / FPS;
+    }
+    if (foodCount <= 0) {
+      neoclubSpeed -= neoclubCount * COW_EAT_RATE / FPS;
+    } else {
+      foodSpeed -= neoclubCount * COW_EAT_RATE / FPS;
+    }
+    neoclubCount += neoclubSpeed;
+    foodCount += foodSpeed;
+    if (neoclubCount < 0) {
+      neoclubCount = 0;
+    }
     if (foodCount < 0) {
       foodCount = 0;
     }
-    if (foodCount == 0) {
-      neoclubSpeed = -neoclubCount * COW_EAT_RATE / FPS;
-    }
-    neoclubCount += neoclubSpeed;
   }
 
   function render() {
     // 显示点击统计
-    game.debug.text('小游♂戏 by yk', 2, 16, '#00FF00');
-    game.debug.text('fps:' + game.time.fps + '/' + game.time.desiredFps, 2, 32, '#00FF00');
-    game.debug.text('牛力:' + neoclubCount.toFixed(2) + '(' + (neoclubSpeed * 60).toFixed(2) + '/s)', 2, 48, '#00FF00');
+    game.debug.text('小游♂戏 by yk', 2, 16, COLOR_GREEN);
+    game.debug.text('fps:' + game.time.fps + '/' + game.time.desiredFps, 2, 32, COLOR_GREEN);
+    game.debug.text('牛:' + neoclubCount.toFixed(2) + '(' + (neoclubSpeed * 60).toFixed(2) + '/s)', 2, 48, COLOR_GREEN);
+    game.debug.text('食物:' + foodCount.toFixed(2) + '(' + (foodSpeed * FPS).toFixed(2) + '/s)', 2, 64, COLOR_GREEN);
   }
 
   function showLabel(hint) {
