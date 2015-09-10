@@ -29,6 +29,7 @@ window.onload = function() {
   var foodCount = 0;
   var foodSpeed = 0;
   var farmCount = 0;
+  var formWorker = 0;
 
   function create() {
     game.time.advancedTiming = true;
@@ -106,10 +107,15 @@ window.onload = function() {
 
   function render() {
     // 显示点击统计
-    game.debug.text('小游♂戏 by yk', 2, 16, COLOR_GREEN);
-    game.debug.text('fps:' + game.time.fps + '/' + game.time.desiredFps, 2, 32, COLOR_GREEN);
-    game.debug.text('牛:' + neoclubCount.toFixed(2) + '(' + (neoclubSpeed * 60).toFixed(2) + '/s)', 2, 48, COLOR_GREEN);
-    game.debug.text('食物:' + foodCount.toFixed(2) + '(' + (foodSpeed * FPS).toFixed(2) + '/s)', 2, 64, COLOR_GREEN);
+    var i = 1;
+    renderDebug('小游♂戏 by yk', i++);
+    renderDebug('fps:' + game.time.fps + '/' + game.time.desiredFps, i++);
+    renderDebug('牛:' + neoclubCount.toFixed(2) + '(' + (neoclubSpeed * 60).toFixed(2) + '/s)', i++);
+    renderDebug('食物:' + foodCount.toFixed(2) + '(' + (foodSpeed * FPS).toFixed(2) + '/s)', i++);
+  }
+
+  function renderDebug(text, line) {
+    game.debug.text(text, 2, 16 * line, COLOR_GREEN);
   }
 
   function showLabel(hint) {
