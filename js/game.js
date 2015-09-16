@@ -16,7 +16,7 @@ window.onload = function() {
     game.load.spritesheet('ss_food', 'asset/spritesheet_food.png', 100, 100, 2);
   }
 
-  var LINE_HEIGHT = 20;
+  var LINE_HEIGHT = 24;
   var MAX_MESSAGE_QUEUE_SIZE = GAME_HEIGHT / LINE_HEIGHT - 1;
 
   var KEY_CODE_ENTER = 13;
@@ -31,7 +31,8 @@ window.onload = function() {
   function create() {
     game.stage.setBackgroundColor(COLOR_BLACK);
 
-    addMessage('小游♂戏 by yk');
+    printMessage('小游♂戏 by yk');
+    printMessageln('输入\"help\"开始游戏');
 
     var keyboard = game.input.keyboard;
     keyboard.addCallbacks(this, null, keyUp, keyPress);
@@ -79,11 +80,23 @@ window.onload = function() {
   }
 
   function handleCommand() {
-    var command = getCommand();
-    if (command == 'wangzhongyi') {
-      addMessage('有个大傻逼，叫作王中一');
-    } else {
-      addMessage('不知道什么是' + command);
+    var commandLine = getCommandLine().split(' ');
+
+    if (commandLine.length < 1) {
+      return;
+    }
+    var command = commandLine[0];
+
+    switch (command) {
+      case 'help':
+        printMessageln('试试输入\"shabi\"');
+        break;
+      case 'shabi':
+        printMessageln('有个大傻逼，叫作王中一');
+        break;
+      default:
+        printMessageln('未知命令：' + command);
+        break;
     }
   }
 
@@ -91,15 +104,19 @@ window.onload = function() {
     messageQueue[messageQueue.length - 1].text += char;
   }
 
-  function getCommand() {
+  function getCommandLine() {
     return messageQueue[messageQueue.length - 1].text;
   }
 
-  function addMessage(text) {
+  function printMessage(text) {
     var message = new Object();
     message.text = text;
 
     messageQueue.push(message);
+  }
+
+  function printMessageln(text) {
+    printMessage(text);
     newLine();
   }
 
