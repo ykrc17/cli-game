@@ -22,12 +22,20 @@ function appendCommand(char) {
 }
 
 // 删除文字
-function shiftCommand() {
-  var index = cursorPosition - 1;
+function shiftCommand(index) {
+  var index = getCursorPosition() - 1;
 
-  if (getCommandLength() > 0) {
+  if (index >= 0 && index < getCommandLength()) {
     setCommand(getCommand().substr(0, index) + getCommand().substr(index + 1, getCommandLength()));
     cursorPosition--;
+  }
+}
+
+function deleteCommand() {
+  var index = getCursorPosition();
+
+  if (index >= 0 && index < getCommandLength()) {
+    setCommand(getCommand().substr(0, index) + getCommand().substr(index + 1, getCommandLength()));
   }
 }
 
@@ -69,4 +77,16 @@ function newLine() {
 
 function getCursorPosition() {
   return cursorPosition;
+}
+
+function moveCursorLeft() {
+  if (cursorPosition > 0) {
+    cursorPosition--;
+  }
+}
+
+function moveCursorRight() {
+  if (cursorPosition < getCommandLength()) {
+    cursorPosition++;
+  }
 }

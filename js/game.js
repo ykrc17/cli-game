@@ -18,8 +18,11 @@ window.onload = function() {
 
   var LINE_HEIGHT = 24;
 
-  var KEY_CODE_ENTER = 13;
+  var KEY_CODE_ENTER = Phaser.Keyboard.ENTER;
   var KEY_CODE_BACKSPACE = Phaser.Keyboard.BACKSPACE;
+  var KEY_CODE_DELETE = Phaser.Keyboard.DELETE;
+  var KEY_CODE_LEFT = Phaser.Keyboard.LEFT;
+  var KEY_CODE_RIGHT = Phaser.Keyboard.RIGHT;
 
   var COLOR_WHITE = '#FFFFFF';
   var COLOR_BLACK = '#000000';
@@ -76,6 +79,15 @@ window.onload = function() {
         break;
       case KEY_CODE_BACKSPACE:
         shiftCommand();
+        break;
+      case KEY_CODE_DELETE:
+        deleteCommand();
+        break;
+      case KEY_CODE_LEFT:
+        moveCursorLeft();
+        break;
+      case KEY_CODE_RIGHT:
+        moveCursorRight();
         break;
     }
   }
