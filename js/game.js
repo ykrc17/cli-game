@@ -17,7 +17,6 @@ window.onload = function() {
   }
 
   var LINE_HEIGHT = 24;
-  var MAX_MESSAGE_QUEUE_SIZE = GAME_HEIGHT / LINE_HEIGHT - 1;
 
   var KEY_CODE_ENTER = 13;
   var KEY_CODE_BACKSPACE = Phaser.Keyboard.BACKSPACE;
@@ -26,8 +25,6 @@ window.onload = function() {
   var COLOR_BLACK = '#000000';
   var COLOR_GREEN = '#00FF00';
 
-  var messageQueue = [];
-  var cursorPosition = 0;
   var showCursor = false;
 
   function create() {
@@ -48,25 +45,26 @@ window.onload = function() {
   function update() {}
 
   function render() {
-    for (var i in messageQueue) {
-      renderDebug(messageQueue[i], i, i == messageQueue.length - 1);
+    for (var i in getMessages()) {
+      renderDebug(i);
     }
   }
 
-  function renderDebug(message, line, isLast) {
+  function renderDebug(index) {
+    var message = getMessage(index);
     var text = message.text;
     if (message.showHint) {
       text = '> ' + text;
     } else {
       text = '  ' + text;
     }
-    game.debug.text(text, 2, LINE_HEIGHT * (parseInt(line) + 1), COLOR_GREEN);
-    if (isLast && showCursor) {
+    game.debug.text(text, 2, LINE_HEIGHT * (parseInt(index) + 1), COLOR_GREEN);
+    if (isCommand(index) && showCursor) {
       var cursorText = '';
-      for (var i = 0; i < cursorPosition + 2; i++) {
+      for (var i = 0; i < getCursorPosition() + 2; i++) {
         cursorText += ' ';
       }
-      game.debug.text(cursorText + '_', 2, LINE_HEIGHT * (parseInt(line) + 1), COLOR_GREEN);
+      game.debug.text(cursorText + '_', 2, LINE_HEIGHT * (parseInt(index) + 1), COLOR_GREEN);
     }
   }
 
@@ -89,7 +87,7 @@ window.onload = function() {
   }
 
   function handleCommand() {
-    var commandLine = getCommandLine().split(' ');
+    var commandLine = getCommand().split(' ');
     if (commandLine.length < 1) {
       return;
     }
@@ -111,47 +109,5 @@ window.onload = function() {
         printMessageln('未知命令：' + command);
         break;
     }
-  }
-
-  // 输入文字
-  function appendCommand(char) {
-    messageQueue[messageQueue.length - 1].text += char;
-    cursorPosition++;
-  }
-
-  // 删除文字
-  function shiftCommand() {
-    if (messageQueue[messageQueue.length - 1].text.length > 0) {
-      messageQueue[messageQueue.length - 1].text = messageQueue[messageQueue.length - 1].text.substr(0, messageQueue[messageQueue.length - 1].text.length - 1);
-      cursorPosition--;
-    }
-  }
-
-  function getCommandLine() {
-    return messageQueue[messageQueue.length - 1].text;
-  }
-
-  function printMessage(text) {
-    var message = new Object();
-    message.text = text;
-
-    messageQueue.push(message);
-  }
-
-  function printMessageln(text) {
-    printMessage(text);
-    newLine();
-  }
-
-  function newLine() {
-    var command = new Object();
-    command.text = '';
-    command.showHint = true;
-
-    messageQueue.push(command);
-    while (messageQueue.length > MAX_MESSAGE_QUEUE_SIZE) {
-      messageQueue.shift();
-    }
-    cursorPosition = 0;
   }
 };
