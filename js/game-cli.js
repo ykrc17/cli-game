@@ -22,12 +22,10 @@ function appendCommand(char) {
 }
 
 // 删除文字
-function shiftCommand(index) {
-  if (typeof index == "undefined") {
-    index = getCommandLength() - 1;
-  }
+function shiftCommand() {
+  var index = cursorPosition - 1;
 
-  if (getCommandLength > 0) {
+  if (getCommandLength() > 0) {
     setCommand(getCommand().substr(0, index) + getCommand().substr(index + 1, getCommandLength()));
     cursorPosition--;
   }
