@@ -17,15 +17,17 @@ window.onload = function() {
   }
 
   var LINE_HEIGHT = 24;
-  var MAX_MESSAGE_QUEUE_SIZE = GAME_HEIGHT / LINE_HEIGHT - 1;
 
-  var KEY_CODE_ENTER = 13;
+  var KEY_CODE_ENTER = Phaser.Keyboard.ENTER;
+  var KEY_CODE_BACKSPACE = Phaser.Keyboard.BACKSPACE;
+  var KEY_CODE_DELETE = Phaser.Keyboard.DELETE;
+  var KEY_CODE_LEFT = Phaser.Keyboard.LEFT;
+  var KEY_CODE_RIGHT = Phaser.Keyboard.RIGHT;
 
   var COLOR_WHITE = '#FFFFFF';
   var COLOR_BLACK = '#000000';
   var COLOR_GREEN = '#00FF00';
 
-  var messageQueue = [];
   var showCursor = false;
 
   function create() {
@@ -36,7 +38,7 @@ window.onload = function() {
 
     var keyboard = game.input.keyboard;
     keyboard.addCallbacks(this, null, keyUp, keyPress);
-    keyboard.addKey(Phaser.Keyboard.BACKSPACE);
+    keyboard.addKey(KEY_CODE_BACKSPACE);
 
     game.time.events.loop(500, function() {
       showCursor = !showCursor;
@@ -46,22 +48,27 @@ window.onload = function() {
   function update() {}
 
   function render() {
-    for (var i in messageQueue) {
-      renderDebug(messageQueue[i], i, i == messageQueue.length - 1);
+    for (var i in getMessages()) {
+      renderDebug(i);
     }
   }
 
-  function renderDebug(message, line, isLast) {
+  function renderDebug(index) {
+    var message = getMessage(index);
     var text = message.text;
     if (message.showHint) {
       text = '> ' + text;
     } else {
       text = '  ' + text;
     }
-    if (isLast && showCursor) {
-      text += '_';
+    game.debug.text(text, 2, LINE_HEIGHT * (parseInt(index) + 1), COLOR_GREEN);
+    if (isCommand(index) && showCursor) {
+      var cursorText = '';
+      for (var i = 0; i < getCursorPosition() + 2; i++) {
+        cursorText += ' ';
+      }
+      game.debug.text(cursorText + '_', 2, LINE_HEIGHT * (parseInt(index) + 1), COLOR_GREEN);
     }
-    game.debug.text(text, 2, LINE_HEIGHT * (parseInt(line) + 1), COLOR_GREEN);
   }
 
   function keyUp(event) {
@@ -69,6 +76,18 @@ window.onload = function() {
     switch (event.keyCode) {
       case KEY_CODE_ENTER:
         handleCommand();
+        break;
+      case KEY_CODE_BACKSPACE:
+        shiftCommand();
+        break;
+      case KEY_CODE_DELETE:
+        deleteCommand();
+        break;
+      case KEY_CODE_LEFT:
+        moveCursorLeft();
+        break;
+      case KEY_CODE_RIGHT:
+        moveCursorRight();
         break;
     }
   }
@@ -80,12 +99,16 @@ window.onload = function() {
   }
 
   function handleCommand() {
-    var commandLine = getCommandLine().split(' ');
-
+    var commandLine = getCommand().split(' ');
     if (commandLine.length < 1) {
       return;
     }
+
     var command = commandLine[0];
+    if (command.length < 1) {
+      newLine();
+      return;
+    }
 
     switch (command) {
       case 'help':
@@ -97,37 +120,6 @@ window.onload = function() {
       default:
         printMessageln('未知命令：' + command);
         break;
-    }
-  }
-
-  function appendCommand(char) {
-    messageQueue[messageQueue.length - 1].text += char;
-  }
-
-  function getCommandLine() {
-    return messageQueue[messageQueue.length - 1].text;
-  }
-
-  function printMessage(text) {
-    var message = new Object();
-    message.text = text;
-
-    messageQueue.push(message);
-  }
-
-  function printMessageln(text) {
-    printMessage(text);
-    newLine();
-  }
-
-  function newLine() {
-    var command = new Object();
-    command.text = '';
-    command.showHint = true;
-
-    messageQueue.push(command);
-    while (messageQueue.length > MAX_MESSAGE_QUEUE_SIZE) {
-      messageQueue.shift();
     }
   }
 };
