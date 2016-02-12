@@ -112,10 +112,10 @@ window.onload = function() {
 
     switch (command) {
       case 'help':
-        printMessageln('试试输入\"shabi\"');
+        printMessageln('试试输入\"hello\"');
         break;
-      case 'shabi':
-        printMessageln('有个大傻逼，叫作王中一');
+      case 'hello':
+        printMessageln('hello world!');
         break;
       default:
         printMessageln('未知命令：' + command);
