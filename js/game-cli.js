@@ -5,26 +5,19 @@ var CLI = function() {
   this.cursorPosition = 0;
 }
 
-CLI.prototype.getMessages = function() {
-  return this.lines;
-}
-
-CLI.prototype.getMessage = function(index) {
-  return this.lines[index];
-}
-
 CLI.prototype.isCommand = function(index) {
   return index == this.lines.length - 1
 }
 
 // 输入文字
-CLI.prototype.appendCommand = function(char) {
-  this.lines[this.lines.length - 1].text += char;
+CLI.prototype.handleInput = function(char) {
+  var command = this.getCommand()
+  this.setCommand(command.substr(0, this.cursorPosition) + char + command.substr(this.cursorPosition, command.length));
   this.cursorPosition++;
 }
 
 // 删除文字
-CLI.prototype.shiftCommand = function(index) {
+CLI.prototype.handleBackspace = function(index) {
   var index = this.cursorPosition - 1;
 
   var command = this.getCommand()
@@ -34,7 +27,7 @@ CLI.prototype.shiftCommand = function(index) {
   }
 }
 
-CLI.prototype.deleteCommand = function() {
+CLI.prototype.handleDelete = function() {
   var index = this.cursorPosition;
 
   var command = this.getCommand()
@@ -93,7 +86,7 @@ CLI.prototype.moveCursorLeft = function() {
 }
 
 CLI.prototype.moveCursorRight = function() {
-  if (this.cursorPosition < getCommandLength()) {
+  if (this.cursorPosition < this.getCommand().length) {
     this.cursorPosition++;
   }
 }

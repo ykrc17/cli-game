@@ -48,13 +48,13 @@ window.onload = function() {
   function update() {}
 
   function render() {
-    for (var i in cli.getMessages()) {
+    for (var i in cli.lines) {
       renderDebug(i);
     }
   }
 
   function renderDebug(index) {
-    var message = cli.getMessage(index);
+    var message = cli.lines[index];
     var text = message.text;
     if (message.showHint) {
       text = '> ' + text;
@@ -72,16 +72,15 @@ window.onload = function() {
   }
 
   function keyUp(event) {
-    console.log(event);
     switch (event.keyCode) {
       case KEY_CODE_ENTER:
         handleCommand();
         break;
       case KEY_CODE_BACKSPACE:
-        cli.shiftCommand();
+        cli.handleBackspace();
         break;
       case KEY_CODE_DELETE:
-        cli.deleteCommand();
+        cli.handleDelete();
         break;
       case KEY_CODE_LEFT:
         cli.moveCursorLeft();
@@ -94,7 +93,7 @@ window.onload = function() {
 
   function keyPress(char) {
     if (char.charCodeAt() != KEY_CODE_ENTER) {
-      cli.appendCommand(char);
+      cli.handleInput(char);
     }
   }
 
