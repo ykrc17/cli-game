@@ -10,10 +10,10 @@ window.onload = function() {
     render: render
   });
 
+  var cli = new CLI();
+
   function preload() {
-    game.load.image('sprite_neoclub', 'asset/sprite_neoclub.png');
-    game.load.spritesheet('ss_buy', 'asset/spritesheet_buy.png', 100, 100, 2);
-    game.load.spritesheet('ss_food', 'asset/spritesheet_food.png', 100, 100, 2);
+
   }
 
   var LINE_HEIGHT = 24;
@@ -33,8 +33,8 @@ window.onload = function() {
   function create() {
     game.stage.setBackgroundColor(COLOR_BLACK);
 
-    printMessage('小游♂戏 by yk');
-    printMessageln('输入\"help\"开始游戏');
+    cli.printMessage('小游♂戏 by yk');
+    cli.printMessageln('输入\"help\"开始游戏');
 
     var keyboard = game.input.keyboard;
     keyboard.addCallbacks(this, null, keyUp, keyPress);
@@ -48,13 +48,13 @@ window.onload = function() {
   function update() {}
 
   function render() {
-    for (var i in getMessages()) {
+    for (var i in cli.getMessages()) {
       renderDebug(i);
     }
   }
 
   function renderDebug(index) {
-    var message = getMessage(index);
+    var message = cli.getMessage(index);
     var text = message.text;
     if (message.showHint) {
       text = '> ' + text;
@@ -62,9 +62,9 @@ window.onload = function() {
       text = '  ' + text;
     }
     game.debug.text(text, 2, LINE_HEIGHT * (parseInt(index) + 1), COLOR_GREEN);
-    if (isCommand(index) && showCursor) {
+    if (cli.isCommand(index) && showCursor) {
       var cursorText = '';
-      for (var i = 0; i < getCursorPosition() + 2; i++) {
+      for (var i = 0; i < cli.getCursorPosition() + 2; i++) {
         cursorText += ' ';
       }
       game.debug.text(cursorText + '_', 2, LINE_HEIGHT * (parseInt(index) + 1), COLOR_GREEN);
@@ -78,28 +78,28 @@ window.onload = function() {
         handleCommand();
         break;
       case KEY_CODE_BACKSPACE:
-        shiftCommand();
+        cli.shiftCommand();
         break;
       case KEY_CODE_DELETE:
-        deleteCommand();
+        cli.deleteCommand();
         break;
       case KEY_CODE_LEFT:
-        moveCursorLeft();
+        cli.moveCursorLeft();
         break;
       case KEY_CODE_RIGHT:
-        moveCursorRight();
+        cli.moveCursorRight();
         break;
     }
   }
 
   function keyPress(char) {
     if (char.charCodeAt() != KEY_CODE_ENTER) {
-      appendCommand(char);
+      cli.appendCommand(char);
     }
   }
 
   function handleCommand() {
-    var commandLine = getCommand().split(' ');
+    var commandLine = cli.getCommand().split(' ');
     if (commandLine.length < 1) {
       return;
     }
@@ -112,13 +112,13 @@ window.onload = function() {
 
     switch (command) {
       case 'help':
-        printMessageln('试试输入\"hello\"');
+        cli.printMessageln('试试输入\"hello\"');
         break;
       case 'hello':
-        printMessageln('hello world!');
+        cli.printMessageln('hello world!');
         break;
       default:
-        printMessageln('未知命令：' + command);
+        cli.printMessageln('未知命令：' + command);
         break;
     }
   }

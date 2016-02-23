@@ -1,92 +1,99 @@
-var commands = [];
-var cursorPosition = 0;
-
 var MAX_MESSAGE_QUEUE_SIZE = 24;
 
-function getMessages() {
-  return commands;
+var CLI = function() {
+  this.lines = [];
+  this.cursorPosition = 0;
 }
 
-function getMessage(index) {
-  return commands[index];
+CLI.prototype.getMessages = function() {
+  return this.lines;
 }
 
-function isCommand(index) {
-  return index == commands.length - 1
+CLI.prototype.getMessage = function(index) {
+  return this.lines[index];
+}
+
+CLI.prototype.isCommand = function(index) {
+  return index == this.lines.length - 1
 }
 
 // 输入文字
-function appendCommand(char) {
-  commands[commands.length - 1].text += char;
-  cursorPosition++;
+CLI.prototype.appendCommand = function(char) {
+  this.lines[this.lines.length - 1].text += char;
+  this.cursorPosition++;
 }
 
 // 删除文字
-function shiftCommand(index) {
-  var index = getCursorPosition() - 1;
+CLI.prototype.shiftCommand = function(index) {
+  var index = this.cursorPosition - 1;
 
-  if (index >= 0 && index < getCommandLength()) {
-    setCommand(getCommand().substr(0, index) + getCommand().substr(index + 1, getCommandLength()));
-    cursorPosition--;
+  var command = this.getCommand()
+  if (index >= 0 && index < command.length) {
+    this.setCommand(command.substr(0, index) + command.substr(index + 1, command.length));
+    this.cursorPosition--;
   }
 }
 
-function deleteCommand() {
-  var index = getCursorPosition();
+CLI.prototype.deleteCommand = function() {
+  var index = this.cursorPosition;
 
-  if (index >= 0 && index < getCommandLength()) {
-    setCommand(getCommand().substr(0, index) + getCommand().substr(index + 1, getCommandLength()));
+  var command = this.getCommand()
+  if (index >= 0 && index < command.length) {
+    this.setCommand(command.substr(0, index) + command.substr(index + 1, command.length));
   }
 }
 
-function setCommand(command) {
-  commands[commands.length - 1].text = command
+CLI.prototype.setCommand = function(command) {
+  this.lines[this.lines.length - 1].text = command
 }
 
-function getCommand() {
-  return commands[commands.length - 1].text;
+CLI.prototype.getCommand = function() {
+  return this.lines[this.lines.length - 1].text;
 }
 
-function getCommandLength() {
-  return commands[commands.length - 1].text.length;
+CLI.prototype.getCommandLength = function() {
+  return this.lines[this.lines.length - 1].text.length;
 }
 
-function printMessage(text) {
-  var message = new Object();
-  message.text = text;
-
-  commands.push(message);
-}
-
-function printMessageln(text) {
-  printMessage(text);
-  newLine();
-}
-
-function newLine() {
-  var command = new Object();
-  command.text = '';
-  command.showHint = true;
-
-  commands.push(command);
-  while (commands.length > MAX_MESSAGE_QUEUE_SIZE) {
-    commands.shift();
+CLI.prototype.printMessage = function(text) {
+  var message = {
+    text: text,
+    showHint: false
   }
-  cursorPosition = 0;
+
+  this.lines.push(message);
 }
 
-function getCursorPosition() {
-  return cursorPosition;
+CLI.prototype.printMessageln = function(text) {
+  this.printMessage(text);
+  this.newLine();
 }
 
-function moveCursorLeft() {
-  if (cursorPosition > 0) {
-    cursorPosition--;
+CLI.prototype.newLine = function() {
+  var command = {
+    text: '',
+    showHint: true
+  }
+
+  this.lines.push(command);
+  while (this.lines.length > MAX_MESSAGE_QUEUE_SIZE) {
+    this.lines.shift();
+  }
+  this.cursorPosition = 0;
+}
+
+CLI.prototype.getCursorPosition = function() {
+  return this.cursorPosition;
+}
+
+CLI.prototype.moveCursorLeft = function() {
+  if (this.cursorPosition > 0) {
+    this.cursorPosition--;
   }
 }
 
-function moveCursorRight() {
-  if (cursorPosition < getCommandLength()) {
-    cursorPosition++;
+CLI.prototype.moveCursorRight = function() {
+  if (this.cursorPosition < getCommandLength()) {
+    this.cursorPosition++;
   }
 }
